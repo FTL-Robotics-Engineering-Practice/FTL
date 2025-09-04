@@ -1,0 +1,23 @@
+# Игнорируемые папки
+plan/
+tests/
+
+# Общие файлы для игнорирования
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Временные файлы
+node_modules/
+.env
+.env.local
+.env.production
