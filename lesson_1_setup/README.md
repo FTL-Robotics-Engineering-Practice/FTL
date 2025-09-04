@@ -42,15 +42,15 @@
 
 | Часть | Тема | Файл |
 |-------|------|------|
-| **0** | 🛠️ Подготовка | [`part_0_setup.md`](part_0_setup.md) |
-| **1** | 📖 Что такое Git | [`part_1_what_is_git.md`](part_1_what_is_git.md) |
-| **2** | ⚙️ Настройка и первый репозиторий | [`part_2_my_git.md`](part_2_my_git.md) |
-| **3** | 🤝 Pull Requests | [`part_3_pull_requests.md`](part_3_pull_requests.md) |
-| **4** | 🔥 Коллаборация с конфликтами | [`part_4_collaboration.md`](part_4_collaboration.md) |
-| **5** | 🔄 Merge vs Rebase | [`part_5_merge_rebase.md`](part_5_merge_rebase.md) |
-| **6** | ⏪ Откаты и восстановление | [`part_6_back.md`](part_6_back.md) |
-| **7** | 📋 Итоги | [`part_7_resume.md`](part_7_resume.md) |
-| **8** | 🏠 Домашнее задание | [`part_8_homework.md`](part_8_homework.md) |
+| **0** | 🛠️ Подготовка | [`part_0_setup.md`](parts/part_0_setup.md) |
+| **1** | 📖 Что такое Git | [`part_1_what_is_git.md`](parts/part_1_what_is_git.md) |
+| **2** | ⚙️ Настройка и первый репозиторий | [`part_2_my_git.md`](parts/part_2_my_git.md) |
+| **3** | 🤝 Pull Requests | [`part_3_pull_requests.md`](parts/part_3_pull_requests.md) |
+| **4** | 🔥 Коллаборация с конфликтами | [`part_4_collaboration.md`](parts/part_4_collaboration.md) |
+| **5** | 🔄 Merge vs Rebase | [`part_5_merge_rebase.md`](parts/part_5_merge_rebase.md) |
+| **6** | ⏪ Откаты и восстановление | [`part_6_back.md`](parts/part_6_back.md) |
+| **7** | 📋 Итоги | [`part_7_resume.md`](parts/part_7_resume.md) |
+| **8** | 🏠 Домашнее задание | [`part_8_homework.md`](parts/part_8_homework.md) |
 
 ---
 
