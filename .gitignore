@@ -1,6 +1,7 @@
 # Игнорируемые папки
 plan/
 tests/
+lesson_2_classes/md_src/
 
 # Общие файлы для игнорирования
 .DS_Store
