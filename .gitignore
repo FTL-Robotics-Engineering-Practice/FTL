@@ -23,4 +23,5 @@ node_modules/
 .env.local
 .env.production
 
+lesson_3_methods/src/sols/
 
