@@ -22,3 +22,6 @@ node_modules/
 .env
 .env.local
 .env.production
+
+# Ноутбуки
+lesson_2_classes/main.ipynb
