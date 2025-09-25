@@ -23,5 +23,6 @@ node_modules/
 .env.local
 .env.production
 
+# Ноутбуки
+lesson_2_classes/main.ipynb
 lesson_3_methods/src/sols/
-
