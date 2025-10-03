@@ -1,0 +1,73 @@
+import pygame
+
+# Инициализация Pygame
+pygame.init()
+
+# Создаем окно
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Задание 2.2: Движущийся круг")
+clock = pygame.time.Clock()
+
+# Шрифт для текста
+font = pygame.font.Font(None, 24)
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
+BLUE = (0, 100, 255)
+
+# Позиция круга (экранные координаты)
+circle_x = 400
+circle_y = 300
+
+
+def draw_grid(screen):
+    """Рисует сетку координат"""
+    for x in range(0, 800, 50):
+        color = GRAY if x != 400 else BLACK
+        width = 1 if x != 400 else 2
+        pygame.draw.line(screen, color, (x, 0), (x, 600), width)
+    
+    for y in range(0, 600, 50):
+        color = GRAY if y != 300 else BLACK
+        width = 1 if y != 300 else 2
+        pygame.draw.line(screen, color, (0, y), (800, y), width)
+
+
+# Главный игровой цикл
+running = True
+while running:
+    # Обработка событий
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # ДВИЖЕНИЕ: круг двигается вправо
+    circle_x += 2
+    
+    # Если вышел за край, вернуть назад
+    if circle_x > 850:
+        circle_x = -50
+    
+    # Заливаем экран белым цветом
+    screen.fill(WHITE)
+    
+    # Рисуем сетку
+    draw_grid(screen)
+    
+    # Рисуем синий круг
+    pygame.draw.circle(screen, BLUE, (int(circle_x), int(circle_y)), 15)
+    
+    # Выводим текст
+    text = font.render(f"Позиция (экран): ({circle_x:.0f}, {circle_y:.0f})", True, BLACK)
+    screen.blit(text, (10, 10))
+    
+    # Обновляем экран
+    pygame.display.flip()
+    
+    # Контроль FPS
+    clock.tick(60)
+
+# Завершение
+pygame.quit()
