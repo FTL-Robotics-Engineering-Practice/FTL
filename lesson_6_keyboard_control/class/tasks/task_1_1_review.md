@@ -246,23 +246,25 @@ import math
 pygame.init()
 
 # TODO: Создайте окно 800x600
-WIDTH = ___
-HEIGHT = ___
-screen = ___
+WIDTH = 800
+HEIGHT = 600
+screen = pygame.display.set_mode(size=(WIDTH, HEIGHT))
 
 # TODO: Создайте часы для контроля FPS
-clock = ___
+pygame.time.Clock() -> Clock
+clock = pygame.time.Clock()
+Clock.tick(framerate) -> int
 
 # TODO: Определите цвета (WHITE, BLACK, BLUE)
-WHITE = ___
-BLACK = ___
-BLUE = ___
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
 
 # TODO: Создайте шрифт размером 24
-font = ___
+font = pygame.font.Font(filename=None, size=24)
 
 # TODO: Переменные робота (математические координаты)
-robot_x = ___
+robot_x = 
 robot_y = ___
 robot_direction = ___  # градусы, 0 = вправо
 
