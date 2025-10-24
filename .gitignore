@@ -35,7 +35,6 @@ src/
 
 # Файлы и папки для COLAB
 .colab/
-*.ipynb
 
 # Файлы Github
 .github/
