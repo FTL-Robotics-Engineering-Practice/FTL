@@ -30,3 +30,20 @@ lesson_3_methods/src/sols/
 lesson_4_class_practice/src.md
 
 lesson_5_pygame/src/solutions/
+
+src/
+
+# Файлы и папки для COLAB
+.colab/
+*.ipynb
+
+# Файлы Github
+.github/
+*.gitattributes
+*.github
+
+# Файлы и папки для Claude
+.claude/
+claude.json
+
+.github/
