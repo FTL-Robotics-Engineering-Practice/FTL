@@ -20,8 +20,8 @@ def main():
     pygame.display.set_caption("Редактор препятствий")
 
     # Настройки сетки
-    GRID_COLS = 75
-    GRID_ROWS = 50
+    GRID_COLS = 80
+    GRID_ROWS = 60
     CELL_WIDTH = WIDTH // GRID_COLS
     CELL_HEIGHT = HEIGHT // GRID_ROWS
 
@@ -59,7 +59,7 @@ def main():
         hover_cell = grid.get_cell_at_position(mouse_x, mouse_y)
 
         # Отрисовка
-        renderer.draw_grid(grid, hover_cell=hover_cell)
+        renderer.draw_grid(grid, hover_cell)
 
         # Обновление экрана
         pygame.display.flip()

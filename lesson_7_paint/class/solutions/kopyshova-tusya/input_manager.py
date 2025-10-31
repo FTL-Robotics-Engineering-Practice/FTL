@@ -11,6 +11,7 @@ class InputManager:
         Args:
             grid: объект Grid
             history: объект History
+            map_manager: объект MapManager  # <-- ДОБАВЛЕНО
             running_flag: список [True/False] для управления циклом
         """
         self.grid = grid
@@ -156,7 +157,7 @@ class InputManager:
     def _clear_all(self):
         """Очистить всю сетку и историю"""
         # TODO: Очистите сетку
-        self.grid.clear_cell()
+        self.grid.clear_all()
         # TODO: Очистите историю
         self.history.clear()
         print("Сетка и история очищены")

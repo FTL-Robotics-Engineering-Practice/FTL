@@ -75,7 +75,7 @@ class MapManager:
                 print(f"   Текущий: {grid.cols}×{grid.rows}")
 
             # TODO: Очистите текущую карту
-            grid.clear_cell(col, row)
+            grid.clear_all()
 
             # TODO: Загрузите клетки из файла
             loaded_count = 0
@@ -83,7 +83,7 @@ class MapManager:
                 col, row = cell
 
                 # Проверяем, что клетка в пределах текущей сетки
-                if 0 <= col < grid.cols  and 0 <= row < grid.rows:
+                if (0 <= col < grid.cols)  and (0 <= row < grid.rows):
                     grid.fill_cell(col, row)
                     loaded_count += 1
 
