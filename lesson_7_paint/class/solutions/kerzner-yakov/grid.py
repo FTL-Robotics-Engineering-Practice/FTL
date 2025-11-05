@@ -3,12 +3,13 @@
 class Grid:
     """Класс для управления сеткой препятствий"""
 
-    def __init__(self, width, height, cell_width, cell_height):
+    def __init__(self, width, height, cell_width, cell_height, offset_x=0):
         """Инициализация сетки"""
         self.width = width
         self.height = height
         self.cell_width = cell_width
         self.cell_height = cell_height
+        self.offset_x = offset_x
 
         self.cols = width // cell_width
         self.rows = height // cell_height
@@ -17,12 +18,26 @@ class Grid:
         self.filled_cells = set()
 
     def get_cell_at_position(self, x, y):
-        """Получить индексы клетки по экранным координатам"""
+        """
+        Получить индексы клетки по экранным координатам
+
+        Args:
+            x: координата X курсора мыши
+            y: координата Y курсора мыши
+
+        Returns:
+            (col, row) - индексы клетки или None, если вне границ
+        """
+        # TODO: Учитываем смещение сетки
+        x = x - self.offset_x
+
+        # Проверяем границы
         if x < 0 or x >= self.width or y < 0 or y >= self.height:
             return None
 
         col = int(x // self.cell_width)
         row = int(y // self.cell_height)
+
         return (col, row)
 
     def fill_cell(self, col, row):

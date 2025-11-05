@@ -7,6 +7,8 @@ from history import History
 from renderer import Renderer
 from input_manager import InputManager
 from map_manager import MapManager
+from mode_manager import ModeManager
+from robot import Robot 
 
 def main():
     """Главная функция программы"""
@@ -14,7 +16,9 @@ def main():
     pygame.init()
 
     # Настройки окна
-    WIDTH = 800
+    PANEL_WIDTH = 200
+    GRID_WIDTH = 800
+    WIDTH = PANEL_WIDTH + GRID_WIDTH
     HEIGHT = 600
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Редактор препятствий")
@@ -32,39 +36,77 @@ def main():
     running = [True]
 
     # TODO: Создайте объекты
-    grid = Grid(WIDTH, HEIGHT, CELL_WIDTH, CELL_HEIGHT)
+    grid = Grid(GRID_WIDTH, HEIGHT, CELL_WIDTH, CELL_HEIGHT, offset_x=PANEL_WIDTH)
     history = History()
-    renderer = Renderer(screen)
+    renderer = Renderer(screen, panel_width=PANEL_WIDTH)  # PANEL_WIDTH
     map_manager = MapManager()
-    input_manager = InputManager(grid, history, map_manager, running)
+    mode_manager = ModeManager()
+    
+
+    # Создаём робота в центре карты
+    robot = Robot(
+        x=GRID_COLS / 2.0,
+        y=GRID_ROWS / 2.0,
+        angle=0.0,
+        radius=1.0
+    )
+    input_manager = InputManager(grid, history, map_manager, running, mode_manager, robot)
 
     print("Редактор препятствий запущен!")
     print("Нажмите H для справки по управлению")
 
     # Игровой цикл
+        # Игровой цикл
     while running[0]:
         # Обработка событий
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running[0] = False
             else:
-                # TODO: Передайте событие в InputManager
                 input_manager.handle_event(event)
 
-        # TODO: Получите позицию мыши и передайте в InputManager
+        # Получаем позицию мыши
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        input_manager.handle_mouse_motion(mouse_x, mouse_y)
 
-        # Определяем клетку под курсором для подсветки
-        hover_cell = grid.get_cell_at_position(mouse_x, mouse_y)
+        # TODO: Обновляем скорости робота на основе нажатых клавиш
+        input_manager.update_robot_velocities()
+
+        # TODO: Обновляем робота только в режиме ROBOT
+        if mode_manager.is_robot_mode():
+            # TODO: НОВЫЙ КОД - используем проверку столкновений
+            robot.update_with_collision_check(dt=0.016, grid=grid)  # update_with_collision_check
+
+            # Ограничиваем робота границами карты
+            robot.clamp_position(robot.radius, grid.cols - robot.radius,
+                                robot.radius, grid.rows - robot.radius)
+
+        # TODO: Определяем клетку под курсором только в режиме MAP_EDIT
+        hover_cell = None
+        if mode_manager.is_map_mode():
+            hover_cell = grid.get_cell_at_position(mouse_x, mouse_y)
+            input_manager.handle_mouse_motion(mouse_x, mouse_y)
 
         # Отрисовка
         renderer.draw_grid(grid, hover_cell=hover_cell)
 
+                # Рисуем робота только в режиме ROBOT
+        if mode_manager.is_robot_mode():
+            # TODO: Сначала рисуем зоны обнаружения (под роботом)
+            renderer.draw_detection_zones(robot, grid)
+            # Потом рисуем робота поверх зон
+            renderer.draw_robot(robot, grid)
+        
+        # TODO: Рисуем информационную панель слева
+        renderer.draw_info_panel(
+            robot=robot if mode_manager.is_robot_mode() else None,  # robot
+            mode_manager=mode_manager,  # mode_manager
+            grid=grid
+            )
+            
+
         # Обновление экрана
         pygame.display.flip()
         clock.tick(60)
-
     # Завершение
     pygame.quit()
     sys.exit()
