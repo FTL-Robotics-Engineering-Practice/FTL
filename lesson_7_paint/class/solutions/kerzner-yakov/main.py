@@ -6,6 +6,7 @@ from grid import Grid
 from history import History
 from renderer import Renderer
 from input_manager import InputManager
+from map_manager import MapManager
 
 def main():
     """Главная функция программы"""
@@ -34,7 +35,8 @@ def main():
     grid = Grid(WIDTH, HEIGHT, CELL_WIDTH, CELL_HEIGHT)
     history = History()
     renderer = Renderer(screen)
-    input_manager = InputManager(grid, history, running)
+    map_manager = MapManager()
+    input_manager = InputManager(grid, history, map_manager, running)
 
     print("Редактор препятствий запущен!")
     print("Нажмите H для справки по управлению")

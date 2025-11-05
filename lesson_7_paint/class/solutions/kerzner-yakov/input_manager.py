@@ -4,17 +4,19 @@ import pygame
 class InputManager:
     """Класс для управления всем вводом (мышь + клавиатура)"""
 
-    def __init__(self, grid, history, running_flag):
+    def __init__(self, grid, history, map_manager, running_flag):
         """
         Инициализация менеджера ввода
 
         Args:
             grid: объект Grid
             history: объект History
+            map_manager: объект MapManager
             running_flag: список [True/False] для управления циклом
         """
         self.grid = grid
         self.history = history
+        self.map_manager = map_manager
         self.running_flag = running_flag
 
         # Флаги состояния мыши
@@ -52,7 +54,9 @@ class InputManager:
         self.bind_key(pygame.K_h, "показать справку", self._show_help)
         self.bind_key(pygame.K_z, "отменить последнее действие", self._undo_action)
         self.bind_key(pygame.K_c, "очистить всё", self._clear_all)
-
+        
+        self.bind_key(pygame.K_s, "сохранить карту", self._save_map)
+        self.bind_key(pygame.K_l, "загрузить карту", self._load_map)
     def handle_event(self, event):
         """
         Обработать событие pygame
@@ -177,3 +181,19 @@ class InputManager:
         print(f"Клеток заполнено: {len(self.grid.filled_cells)}")
         print(f"Действий в истории: {self.history.get_size()}")
         print("="*50 + "\n")
+
+    def _save_map(self):
+        """Сохранить карту"""
+        # TODO: Вызовите метод save_map у map_manager
+        if self.map_manager.save_map(self.grid):
+            # После сохранения очищаем историю
+            # (т.к. сохранённое состояние становится "точкой отсчёта")
+            self.history.clear()
+
+    def _load_map(self):
+        """Загрузить карту"""
+        # TODO: Вызовите метод load_map у map_manager
+        if self.map_manager.load_map(self.grid):
+            # После загрузки очищаем историю
+            # (т.к. загруженное состояние - новая "точка отсчёта")
+            self.history.clear()
