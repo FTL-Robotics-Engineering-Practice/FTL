@@ -1,5 +1,5 @@
 """Главный файл программы - редактор препятствий"""
-import pygame
+import pygame  
 import sys
 
 from grid import Grid
