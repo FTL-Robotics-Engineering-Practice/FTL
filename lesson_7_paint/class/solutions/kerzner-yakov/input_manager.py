@@ -4,24 +4,39 @@ import pygame
 class InputManager:
     """Класс для управления всем вводом (мышь + клавиатура)"""
 
-    def __init__(self, grid, history, running_flag):
+    def __init__(self, grid, history, map_manager, running_flag, mode_manager, robot):
         """
         Инициализация менеджера ввода
 
         Args:
             grid: объект Grid
             history: объект History
+            map_manager: объект MapManager
             running_flag: список [True/False] для управления циклом
+            mode_manager: объект ModeManager
+            robot: объект Robot
         """
         self.grid = grid
         self.history = history
+        self.map_manager = map_manager
         self.running_flag = running_flag
+        self.mode_manager = mode_manager
+        self.robot = robot
 
         # Флаги состояния мыши
         self.left_mouse_pressed = False
         self.right_mouse_pressed = False
         self.last_drawn_cell = None
         self.last_erased_cell = None
+
+        # TODO: Словарь для отслеживания нажатых клавиш управления
+        # Формат: {код_клавиши: True/False}
+        self.pressed_keys = {
+            pygame.K_w: False,  # False
+            pygame.K_s: False,  # False
+            pygame.K_a: False,  # False
+            pygame.K_d: False   # False
+        }
 
         # TODO: Словарь привязок клавиш
         # Структура: {код_клавиши: {'description': описание, 'function': функция}}
@@ -52,7 +67,11 @@ class InputManager:
         self.bind_key(pygame.K_h, "показать справку", self._show_help)
         self.bind_key(pygame.K_z, "отменить последнее действие", self._undo_action)
         self.bind_key(pygame.K_c, "очистить всё", self._clear_all)
-
+        
+        self.bind_key(pygame.K_k, "сохранить карту", self._save_map)
+        self.bind_key(pygame.K_l, "загрузить карту", self._load_map)
+        # TODO: Добавьте привязку TAB для переключения режима
+        self.bind_key(pygame.K_TAB, "переключить режим", self._toggle_mode)
     def handle_event(self, event):
         """
         Обработать событие pygame
@@ -62,10 +81,19 @@ class InputManager:
         """
         # Обработка клавиш
         if event.type == pygame.KEYDOWN:
-            # TODO: Проверьте, есть ли привязка для этой клавиши
+            # TODO: Если нажата клавиша управления роботом - сохраняем в словарь
+            if event.key in self.pressed_keys:
+                self.pressed_keys[event.key] = True  # True
+
+            # Проверяем, есть ли привязка для этой клавиши
             if event.key in self.key_bindings:
-                # Вызываем привязанную функцию
                 self.key_bindings[event.key]['function']()
+
+        # TODO: Обработка отпускания клавиш
+        elif event.type == pygame.KEYUP:  # KEYUP
+            # Если отпущена клавиша управления - сбрасываем в словаре
+            if event.key in self.pressed_keys:
+                self.pressed_keys[event.key] = False  # False
 
         # Обработка мыши - нажатие
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -101,6 +129,11 @@ class InputManager:
             mouse_x: координата X мыши
             mouse_y: координата Y мыши
         """
+        # TODO: Проверьте, что мы в режиме редактирования карты
+        # Если нет - выходим из функции
+        if not self.mode_manager.is_map_mode():
+            return
+
         # Рисование при зажатой левой кнопке
         if self.left_mouse_pressed:
             cell = self.grid.get_cell_at_position(mouse_x, mouse_y)
@@ -121,7 +154,6 @@ class InputManager:
                         self.grid.clear_cell(col, row)
                         self.history.add_action({'type': 'erase', 'cell': (col, row)})
                     self.last_erased_cell = cell
-
     # ===== Функции-обработчики команд =====
 
     def _exit_program(self):
@@ -177,3 +209,61 @@ class InputManager:
         print(f"Клеток заполнено: {len(self.grid.filled_cells)}")
         print(f"Действий в истории: {self.history.get_size()}")
         print("="*50 + "\n")
+
+    def _save_map(self):
+        """Сохранить карту"""
+        # TODO: Вызовите метод save_map у map_manager
+        if self.map_manager.save_map(self.grid):
+            # После сохранения очищаем историю
+            # (т.к. сохранённое состояние становится "точкой отсчёта")
+            self.history.clear()
+
+    def _load_map(self):
+        """Загрузить карту"""
+        # TODO: Вызовите метод load_map у map_manager
+        if self.map_manager.load_map(self.grid):
+            # После загрузки очищаем историю
+            # (т.к. загруженное состояние - новая "точка отсчёта")
+            self.history.clear()
+
+    def _toggle_mode(self):
+        """Переключить режим работы"""
+        # TODO: Вызовите метод toggle_mode у mode_manager
+        self.mode_manager.toggle_mode()
+
+    def update_robot_velocities(self):
+        """
+        Обновить скорости робота на основе нажатых клавиш
+
+        Вызывается каждый кадр в игровом цикле
+        """
+        # Только в режиме робота
+        if not self.mode_manager.is_robot_mode():
+            return
+
+        # TODO: Вычисляем линейную скорость
+        linear_velocity = 0.0
+
+        if self.pressed_keys[pygame.K_w]:
+            # W - ехать вперёд (положительная скорость)
+            linear_velocity += self.robot.max_linear_velocity  # max_linear_velocity
+
+        if self.pressed_keys[pygame.K_s]:  # S
+            # S - ехать назад (отрицательная скорость)
+            linear_velocity -= self.robot.max_linear_velocity
+
+        # TODO: Вычисляем угловую скорость
+        angular_velocity = 0.0
+
+        if self.pressed_keys[pygame.K_a]:  # A
+            # A - поворот влево (положительная угловая скорость)
+            # В pygame: положительный угол = против часовой стрелки = влево
+            angular_velocity -= self.robot.max_angular_velocity  # max_angular_velocity
+
+        if self.pressed_keys[pygame.K_d]:  # D
+            # D - поворот вправо (отрицательная угловая скорость)
+            angular_velocity += self.robot.max_angular_velocity
+
+        # TODO: Установите скорости робота
+        self.robot.set_velocities(linear_velocity, angular_velocity)
+    
