@@ -9,6 +9,7 @@ from input_manager import InputManager
 from map_manager import MapManager
 from mode_manager import ModeManager
 from robot import Robot 
+from brain import Brain
 
 def main():
     """Главная функция программы"""
@@ -51,6 +52,7 @@ def main():
         radius=1.0
     )
     input_manager = InputManager(grid, history, map_manager, running, mode_manager, robot)
+    brain = Brain(robot, grid)
 
     print("Редактор препятствий запущен!")
     print("Нажмите H для справки по управлению")
@@ -68,17 +70,19 @@ def main():
         # Получаем позицию мыши
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        # TODO: Обновляем скорости робота на основе нажатых клавиш
-        input_manager.update_robot_velocities()
+        # input_manager.update_robot_velocities()  # управление вручную (отключено, теперь управляет мозг)
 
         # TODO: Обновляем робота только в режиме ROBOT
         if mode_manager.is_robot_mode():
-            # TODO: НОВЫЙ КОД - используем проверку столкновений
-            robot.update_with_collision_check(dt=0.016, grid=grid)  # update_with_collision_check
+            brain.update(dt=0.016)
+
+            # robot.update_with_collision_check(dt=0.016, grid=grid)
 
             # Ограничиваем робота границами карты
             robot.clamp_position(robot.radius, grid.cols - robot.radius,
                                 robot.radius, grid.rows - robot.radius)
+        else:
+            robot.set_velocities(0.0, 0.0)
 
         # TODO: Определяем клетку под курсором только в режиме MAP_EDIT
         hover_cell = None
@@ -108,6 +112,18 @@ def main():
         pygame.display.flip()
         clock.tick(60)
     # Завершение
+    print("\n=== Статистика робота ===")
+    try:
+        formatted_times = [round(t, 3) for t in brain.collision_times]
+    except Exception:
+        formatted_times = []
+    print(f"Количество столкновений: {brain.collision_count}")
+    print(f"Моменты столкновений (с): {formatted_times}")
+    print(f"Длина пройденного пути: {brain.path_length:.2f} клеток")
+    chastota = brain.collision_count / brain.elapsed_time
+    print(f"Частота столкновений: {chastota:.2f} столкновений в секунду")
+    print(f"Период столкновений: {1/chastota:.2f} секунд")
+    
     pygame.quit()
     sys.exit()
 
