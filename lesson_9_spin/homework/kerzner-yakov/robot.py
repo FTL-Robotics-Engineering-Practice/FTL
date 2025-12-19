@@ -5,7 +5,7 @@ import pygame
 class Robot:
     """Класс робота с линейной и угловой скоростями"""
 
-    def __init__(self, x, y, angle=0.0, max_linear_velocity=10.0, max_angular_velocity=10.0, radius=1.0):
+    def __init__(self, x, y, CELL_HEIGHT, CELL_WIDTH, angle=0.0, max_linear_velocity=10.0, max_angular_velocity=10.0, radius=1.0):
         """
         Инициализация робота
         Args:
@@ -19,6 +19,8 @@ class Robot:
         self.x = x
         self.y = y
         self.angle = angle
+        self.CELL_HEIGHT=CELL_HEIGHT
+        self.CELL_WIDTH=CELL_WIDTH
 
         self.radius = radius  # в клетках
 
@@ -111,7 +113,7 @@ class Robot:
         """
         cells = set()
 
-        detection_radius = 3 * self.radius
+        detection_radius = 5 * self.radius
 
         # Мы проверяем квадрат вокруг робота, а потом фильтруем по расстоянию
         min_col = int(self.x - detection_radius)
@@ -146,11 +148,11 @@ class Robot:
             set клеток (col, row) в переднем секторе
         """
         cells = set()
-        detection_radius = 3 * self.radius
+        detection_radius = 5 * self.radius
 
         # 45° в радианах = π/4 ≈ 0.785
         import math
-        sector_angle = math.radians(60) 
+        sector_angle = math.radians(100) 
 
         # Вычисляем границы квадрата для проверки
         min_col = int(self.x - detection_radius)
@@ -212,8 +214,11 @@ class Robot:
                 # Проверяем, есть ли препятствия в секторе
                 for col, row in forward_cells:
                     if grid.is_cell_filled(col, row):
-                        can_move = False 
-                        break  # Нашли препятствие - хватит проверять
+                        dx = (col + 0.5) - self.x
+                        dy = (row + 0.5) - self.y
+                        if math.sqrt(dx**2+dy**2)<=3:
+                            can_move = False 
+                            break  # Нашли препятствие - хватит проверять
 
             # БОНУС - Если двигаемся назад - проверяем задний сектор
             elif self.linear_velocity < 0:
@@ -234,8 +239,11 @@ class Robot:
                 # Проверяем препятствия
                 for col, row in backward_cells:
                     if grid.is_cell_filled(col, row):
-                        can_move = False
-                        break
+                        # can_move = False
+                        # break
+                        pass
+                    else:
+                        can_move = True
 
 
             # Если можем двигаться - обновляем позицию

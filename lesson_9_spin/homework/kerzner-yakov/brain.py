@@ -1,6 +1,6 @@
 from robot import Robot
 from grid import Grid
-
+import math
 
 class Brain:
     def __init__(self, robot, grid, linear_velocity=8.0, angular_velocity=0.0):
@@ -17,6 +17,7 @@ class Brain:
         self.angular_velocity = angular_velocity
         self.was_obstacle_ahead = False  # Флаг для отслеживания предыдущего состояния
         self.side = 'right'
+        self.angle = 0
 
 
     def _has_obstacle_ahead(self):
@@ -56,18 +57,26 @@ class Brain:
             
             cell = (center_x / n, center_y / n)
             d_omega = 0.0005
-            if robot.what_side_sector_cell(cell):
-                self.angular_velocity -= d_omega
-                self.side = 'right'
+            k = 0.01
+            dx = cell[0] - robot.x
+            dy = cell[1] - robot.y
+            
+            angle = math.atan2(dy, dx)*180/math.pi - robot.angle*180/math.pi
+            self.angle=angle
+            print(angle)
+            if angle > 0:
+                print(round(90-angle, 2))
             else:
-                self.angular_velocity += d_omega
-                self.side = 'left'
-                robot.has_collision = 1
-
-            print(f" препятствия: {filled_cells}, центр масс: {cell[0]}, {cell[1]}")
+                print(round(angle+90, 2))
+            print(f" препятствия: {filled_cells}, центр масс: {cell[0]-robot.x}, {cell[1]-robot.y}")
+            if abs(angle) <= 10:
+                self.angular_velocity = self.robot.max_angular_velocity
+            
+            self.angular_velocity = k*angle
+            
         else:
             robot.has_collision = 0
-            
+            self.angular_velocity = 0.0
 
     def update(self, dt, robot):
         """Обновляет состояние робота за временной шаг dt"""
@@ -75,7 +84,7 @@ class Brain:
         print(robot.has_collision)
         print(self._has_obstacle_ahead())
         self.update_angular_speed(robot)
-        angular_velocity = min(self.angular_velocity, self.robot.max_angular_velocity) * int((-1)**robot.has_collision)
+        angular_velocity = min(self.angular_velocity, self.robot.max_angular_velocity) #* int((-1)**robot.has_collision)
         linear_velocity = min(self.linear_velocity, self.robot.max_linear_velocity)
 
         if has_obstacle:

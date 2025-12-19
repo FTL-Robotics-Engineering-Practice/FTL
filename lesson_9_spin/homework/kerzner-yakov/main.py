@@ -1,7 +1,6 @@
 """Главный файл программы - редактор препятствий"""
 import pygame
 import sys
-
 from grid import Grid
 from history import History
 from renderer import Renderer
@@ -35,7 +34,7 @@ def main():
 
     grid = Grid(GRID_WIDTH, HEIGHT, CELL_WIDTH, CELL_HEIGHT, offset_x=PANEL_WIDTH)
     history = History()
-    renderer = Renderer(screen, panel_width=PANEL_WIDTH)
+    
     mode_manager = ModeManager()
     map_manager = MapManager()
 
@@ -44,12 +43,13 @@ def main():
         x=GRID_COLS / 2.0,
         y=GRID_ROWS / 2.0,
         angle=0.0,
-        radius=1.0
+        radius=1.0, CELL_HEIGHT=CELL_HEIGHT, CELL_WIDTH=CELL_WIDTH
     )
     # Часы
     robot.clock = pygame.time.Clock()
 
     brain = Brain(robot, grid, linear_velocity=5.0, angular_velocity=0.0)
+    renderer = Renderer(screen, brain=brain, robot=robot, panel_width=PANEL_WIDTH)
 
     # Создаём менеджер ввода (теперь с robot)
     input_manager = InputManager(grid, history, map_manager, running, mode_manager, robot)  
@@ -87,6 +87,7 @@ def main():
 
         input_manager.update_robot_velocities()
 
+        
         # Обновляем позицию робота (если в режиме ROBOT)
         if mode_manager.is_robot_mode():
 
