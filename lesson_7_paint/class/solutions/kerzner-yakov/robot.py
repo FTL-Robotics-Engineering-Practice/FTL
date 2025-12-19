@@ -111,7 +111,7 @@ class Robot:
         """
         cells = set()
 
-        detection_radius = 3 * self.radius
+        detection_radius = 6 * self.radius
 
         # Мы проверяем квадрат вокруг робота, а потом фильтруем по расстоянию
         min_col = int(self.x - detection_radius)
@@ -146,11 +146,11 @@ class Robot:
             set клеток (col, row) в переднем секторе
         """
         cells = set()
-        detection_radius = 3 * self.radius
+        detection_radius = 6 * self.radius
 
         # 45° в радианах = π/4 ≈ 0.785
         import math
-        sector_angle = math.radians(60) 
+        sector_angle = math.radians(200) 
 
         # Вычисляем границы квадрата для проверки
         min_col = int(self.x - detection_radius)
