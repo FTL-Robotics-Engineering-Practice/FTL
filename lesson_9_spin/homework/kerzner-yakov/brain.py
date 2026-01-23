@@ -1,6 +1,7 @@
 from robot import Robot
 from grid import Grid
 import math
+import numpy as np
 
 class Brain:
     def __init__(self, robot, grid, linear_velocity=8.0, angular_velocity=0.0):
@@ -57,32 +58,51 @@ class Brain:
             
             cell = (center_x / n, center_y / n)
             d_omega = 0.0005
-            k = 0.01
+            k = 2
             dx = cell[0] - robot.x
             dy = cell[1] - robot.y
             
-            angle = math.atan2(dy, dx)*180/math.pi - robot.angle*180/math.pi
+            angle = math.atan2(dy, dx) - robot.angle
+            angle = (angle + math.pi)%(2*math.pi)-math.pi
+            print("Arctg:", round(math.atan2(dy, dx), 3), round(math.atan2(dy, dx)*180/math.pi, 3))
+            print("Robot:", round(robot.angle, 3), round(robot.angle*180/math.pi,3))
             self.angle=angle
-            print(angle)
+            print("Угол:", round(angle, 3), round(angle*180/math.pi, 3))
             if angle > 0:
-                print(round(90-angle, 2))
+                print("Дополнение угла:", round(90-angle*180/math.pi, 2))
+
             else:
-                print(round(angle+90, 2))
-            print(f" препятствия: {filled_cells}, центр масс: {cell[0]-robot.x}, {cell[1]-robot.y}")
-            if abs(angle) <= 10:
-                self.angular_velocity = self.robot.max_angular_velocity
-            
-            self.angular_velocity = k*angle
+                print("Дополнение угла:", round(angle*180/math.pi+90, 2))
+
+            print(f"Препятствия: {filled_cells}, центр масс: {cell[0]-robot.x}, {cell[1]-robot.y}")
+            if abs(angle*180/math.pi) <= 10:
+                rand_sign = 2 * np.random.randint(2) - 1
+                print("Rand_sign:", rand_sign)
+                self.angular_velocity = self.robot.max_angular_velocity * rand_sign
+            else:
+                if angle<=-math.pi/2:
+                    sign = 1
+                elif angle <= 0:
+                    sign = -1
+                elif angle <=math.pi/2:
+                    sign = 1
+                else:
+                    sign = -1
+                print("Sign:", sign)
+                adj = abs(abs(angle) - math.pi/2)
+                print("Adj:", adj*180/math.pi)
+                self.angular_velocity = -k*adj*sign
             
         else:
             robot.has_collision = 0
             self.angular_velocity = 0.0
 
+        print("Angular_velocity:", self.angular_velocity)
+
     def update(self, dt, robot):
         """Обновляет состояние робота за временной шаг dt"""
         has_obstacle = self._has_obstacle_ahead()
-        print(robot.has_collision)
-        print(self._has_obstacle_ahead())
+        print("Есть ли столкновение:", self._has_obstacle_ahead())
         self.update_angular_speed(robot)
         angular_velocity = min(self.angular_velocity, self.robot.max_angular_velocity) #* int((-1)**robot.has_collision)
         linear_velocity = min(self.linear_velocity, self.robot.max_linear_velocity)

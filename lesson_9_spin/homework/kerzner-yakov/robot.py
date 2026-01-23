@@ -1,6 +1,7 @@
 """Модуль для робота с непрерывной физикой"""
 import math
 import pygame
+import numpy as np
 
 class Robot:
     """Класс робота с линейной и угловой скоростями"""
@@ -152,7 +153,7 @@ class Robot:
 
         # 45° в радианах = π/4 ≈ 0.785
         import math
-        sector_angle = math.radians(100) 
+        sector_angle = math.radians(135) 
 
         # Вычисляем границы квадрата для проверки
         min_col = int(self.x - detection_radius)
@@ -254,7 +255,11 @@ class Robot:
                 self.x += self.linear_velocity * math.cos(self.angle) * dt
                 self.y += self.linear_velocity * math.sin(self.angle) * dt
                 self.distance += math.sqrt((self.x - old_x)**2 + (self.y - old_y)**2)
+            else:
+                self.angle += self.max_angular_velocity * dt/10 * np.sign(self.angle)
             # Если can_move == False - робот просто стоит на месте
+
+        print("Can move:", can_move)
 
     def what_side_sector_cell(self, cell):
         """

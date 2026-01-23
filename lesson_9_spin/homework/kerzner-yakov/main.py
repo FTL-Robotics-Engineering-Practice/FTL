@@ -40,8 +40,8 @@ def main():
 
     # Создаём робота в центре карты
     robot = Robot(
-        x=GRID_COLS / 2.0,
-        y=GRID_ROWS / 2.0,
+        x=60,
+        y=50,
         angle=0.0,
         radius=1.0, CELL_HEIGHT=CELL_HEIGHT, CELL_WIDTH=CELL_WIDTH
     )
@@ -135,14 +135,7 @@ def main():
     # print(robot.count_colisions)
     # print(robot.time_collisions)
     # print(robot.distance_collisions)
-    print("\n=== Статистика робота ===")
-    try:
-        formatted_times = [round(t, 3) for t in brain.collision_times]
-    except Exception:
-        formatted_times = []
-    print(f"Количество столкновений: {brain.collision_count}")
-    print(f"Моменты столкновений (с): {formatted_times}")
-    print(f"Длина пройденного пути: {brain.path_length:.2f} клеток")
+    
     # Завершение
     pygame.quit()
     sys.exit()
