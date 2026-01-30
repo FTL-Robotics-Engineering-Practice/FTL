@@ -1,10 +1,11 @@
 """Модуль для отрисовки сетки и интерфейса"""
 import pygame
-
+from brain import Brain
+from robot import Robot
 class Renderer:
     """Класс для отрисовки элементов редактора"""
 
-    def __init__(self, screen, panel_width=0):
+    def __init__(self, screen, robot, brain, panel_width=0):
         """
         Инициализация рендерера
 
@@ -23,6 +24,8 @@ class Renderer:
         self.BLACK = (0, 0, 0)
         self.GREEN = (0, 200, 0)
 
+        self.brain = brain
+        self.robot = robot
         # TODO: Создайте шрифт для текста панели
         import pygame
         self.font = pygame.font.Font(None, 20)  # 20 - размер шрифта
@@ -211,9 +214,10 @@ class Renderer:
 
             # Угол (в градусах)
             import math
-            angle_deg = math.degrees(robot.angle)  # angle
-            draw_text(f"Угол: {angle_deg:.1f}°")
-            draw_text("")
+            if hasattr(robot, 'angle'):
+                angle_deg = math.degrees(robot.angle)  # angle
+                draw_text(f"Угол: {self.brain.angle:.1f}°")
+                draw_text("")
 
             # Скорости
             draw_text(f"V лин: {robot.linear_velocity:.2f}")  # linear_velocity
